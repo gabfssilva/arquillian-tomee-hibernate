@@ -27,7 +27,6 @@ public class PersonEndpointITest {
                 .create(WebArchive.class, "app.war")
                 .addClasses(Person.class, PersonRepository.class, EntityManagerProducer.class, PersonEndpoint.class, JacksonJsonProvider.class)
                 .addAsResource("META-INF/beans.xml", "META-INF/beans.xml")
-                .addAsWebInfResource("META-INF/beans.xml", "beans.xml")
                 .addAsResource("META-INF/persistence.xml", "META-INF/persistence.xml");
 
         return webArchive;
@@ -98,7 +97,7 @@ public class PersonEndpointITest {
                 .post("/app/people")
             .then()
                 .assertThat()
-            .body("id", notNullValue());
+                    .body("id", notNullValue());
         }
 
 
