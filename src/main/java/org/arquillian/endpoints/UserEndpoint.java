@@ -4,6 +4,7 @@ import org.arquillian.converters.UserConverter;
 import org.arquillian.converters.UserResourceConverter;
 import org.arquillian.entities.User;
 import org.arquillian.repositories.UserRepository;
+import org.arquillian.resources.ResourceBase;
 import org.arquillian.resources.UserResource;
 
 import javax.inject.Inject;
@@ -12,6 +13,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.net.URISyntaxException;
+
+import static org.arquillian.resources.ResourceBase.resourceBaseBuilder;
 
 /**
  * @author Gabriel Francisco <gabfssilva@gmail.com>
@@ -33,7 +36,9 @@ public class UserEndpoint {
     @GET
     public Response fetch(){
         return Response
-                    .ok(userRepository.findAll())
+                    .ok(resourceBaseBuilder()
+                            .result(userRepository.findAll())
+                            .build())
                     .build();
     }
 
@@ -45,7 +50,9 @@ public class UserEndpoint {
 
         return Response
                     .created(new URI(PEOPLE_PATH + "/" + user.getId()))
-                    .entity(userResourceConverter.convert(user))
+                    .entity(resourceBaseBuilder()
+                                    .result(userResourceConverter.convert(user))
+                                    .build())
                     .build();
     }
 
@@ -61,7 +68,9 @@ public class UserEndpoint {
         }
 
         return Response
-                    .ok(userResourceConverter.convert(user))
+                    .ok(resourceBaseBuilder()
+                                .result(userResourceConverter.convert(user))
+                                .build())
                     .build();
     }
 }

@@ -7,6 +7,7 @@ import org.arquillian.converters.UserResourceConverter;
 import org.arquillian.entities.User;
 import org.arquillian.interceptors.BeanValidationInterceptor;
 import org.arquillian.interceptors.MethodValidatorProducer;
+import org.arquillian.mappers.DomainValidationExceptionMapper;
 import org.arquillian.producers.EntityManagerProducer;
 import org.arquillian.repositories.UserRepository;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -37,7 +38,8 @@ public class UserEndpointITest {
                             MethodValidatorProducer.class,
                             BeanValidationInterceptor.class,
                             UserResourceConverter.class,
-                            UserConverter.class)
+                            UserConverter.class,
+                            DomainValidationExceptionMapper.class)
                 .addAsResource("META-INF/beans.xml", "META-INF/beans.xml")
                 .addAsResource("META-INF/persistence.xml", "META-INF/persistence.xml");
 
@@ -60,7 +62,7 @@ public class UserEndpointITest {
             .assertThat()
                 .statusCode(equalTo(201))
             .and()
-                .body("id", notNullValue());
+                .body("result.id", notNullValue());
     }
 
 
@@ -77,7 +79,7 @@ public class UserEndpointITest {
                         .post("/app/people")
                     .then()
                         .assertThat()
-                            .body("id", notNullValue())
+                            .body("result.id", notNullValue())
                     .and()
                         .extract()
                             .header("location");
@@ -88,7 +90,7 @@ public class UserEndpointITest {
             .assertThat()
                 .statusCode(equalTo(200))
              .and()
-                .body("id", notNullValue());
+                .body("result.id", notNullValue());
     }
 
 
@@ -107,7 +109,7 @@ public class UserEndpointITest {
                 .post("/app/people")
             .then()
                 .assertThat()
-                    .body("id", notNullValue());
+                    .body("result.id", notNullValue());
         }
 
 
@@ -117,6 +119,6 @@ public class UserEndpointITest {
                     .assertThat()
                         .statusCode(200)
                     .and()
-                        .body("id", hasSize(greaterThanOrEqualTo(10)));
+                        .body("result.id", hasSize(greaterThanOrEqualTo(10)));
     }
 }
