@@ -71,11 +71,11 @@ public class ResourceBase<T> {
             return this;
         }
 
-        public ResourceBaseBuilder error(Integer code, String message, String field) {
+        public ResourceBaseBuilder error(Integer code, String field, String message) {
             if(errors == null){
                 errors = new LinkedList<Error>();
             }
-            errors.add(new Error(code, message, field));
+            errors.add(new Error(code, field, message));
             return this;
         }
 

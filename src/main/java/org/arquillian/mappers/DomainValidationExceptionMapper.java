@@ -20,7 +20,7 @@ public class DomainValidationExceptionMapper implements ExceptionMapper<DomainVa
         ResourceBase.ResourceBaseBuilder<?> resourseBaseBuilder = ResourceBase.resourceBaseBuilder();
 
         for (MethodConstraintViolation<Object> violation : exception.getConstraintViolations()) {
-            resourseBaseBuilder.error(null, violation.getMessage(), violation.getParameterName());
+            resourseBaseBuilder.error(null, violation.getParameterName(), violation.getMessage());
         }
 
         return Response

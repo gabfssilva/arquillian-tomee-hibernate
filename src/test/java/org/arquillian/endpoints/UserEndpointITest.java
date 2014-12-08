@@ -5,7 +5,6 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import org.arquillian.converters.UserConverter;
 import org.arquillian.converters.UserResourceConverter;
 import org.arquillian.entities.User;
-import org.arquillian.interceptors.BeanValidationInterceptor;
 import org.arquillian.interceptors.MethodValidatorProducer;
 import org.arquillian.mappers.DomainValidationExceptionMapper;
 import org.arquillian.producers.EntityManagerProducer;
@@ -36,7 +35,6 @@ public class UserEndpointITest {
                             UserEndpoint.class,
                             JacksonJsonProvider.class,
                             MethodValidatorProducer.class,
-                            BeanValidationInterceptor.class,
                             UserResourceConverter.class,
                             UserConverter.class,
                             DomainValidationExceptionMapper.class)
@@ -49,7 +47,7 @@ public class UserEndpointITest {
 
     @Test
     public void mustReturn201AfterResourceCreated() throws JsonProcessingException {
-        String successfulRequest = "{\"name\":\"Gabriel\",\"occupation\":\"Systems Analyst\", \"cpf\":\"039.082.615-46\"}";
+        String successfulRequest = "{\"name\":\"Gabriel\",\"occupation\":\"Systems Analyst\", \"cpf\":\"743.894.368-21\"}";
 
         given()
             .contentType(MediaType.APPLICATION_JSON)
@@ -68,7 +66,7 @@ public class UserEndpointITest {
 
     @Test
     public void mustReturn200OkAfterGetAnExistingResource() throws JsonProcessingException {
-        String successfulRequest = "{\"name\":\"Gabriel\",\"occupation\":\"Systems Analyst\", \"cpf\":\"039.082.615-46\"}";
+        String successfulRequest = "{\"name\":\"Gabriel\",\"occupation\":\"Systems Analyst\", \"cpf\":\"743.894.368-21\"}";
 
         String uri = given()
                         .contentType(MediaType.APPLICATION_JSON)
@@ -96,7 +94,7 @@ public class UserEndpointITest {
 
     @Test
     public void shouldContainAtLeast10() throws JsonProcessingException {
-        String successfulRequest = "{\"name\":\"Gabriel\",\"occupation\":\"Systems Analyst\", \"cpf\":\"039.082.615-46\"}";
+        String successfulRequest = "{\"name\":\"Gabriel\",\"occupation\":\"Systems Analyst\", \"cpf\":\"743.894.368-21\"}";
 
         for(int i = 0; i< 10;i++){
             given()
@@ -119,6 +117,23 @@ public class UserEndpointITest {
                     .assertThat()
                         .statusCode(200)
                     .and()
-                        .body("result.id", hasSize(greaterThanOrEqualTo(10)));
+                        .body("result.size()", is(greaterThanOrEqualTo(10)));
+    }
+
+    @Test
+    public void assureThatTheServerReturns400IfTheClientSendsAnInvalidCPF() throws JsonProcessingException {
+        String successfulRequest = "{\"name\":\"Gabriel\",\"occupation\":\"Systems Analyst\", \"cpf\":\"763.892.368-21\"}";
+
+        given()
+            .request()
+                .with()
+                    .contentType(MediaType.APPLICATION_JSON)
+                .and().with()
+                    .body(successfulRequest)
+        .when()
+            .post("/app/people")
+        .then().log().everything(true)
+            .assertThat()
+                .statusCode(is(equalTo(400)));
     }
 }
